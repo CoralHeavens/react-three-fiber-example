@@ -4,16 +4,20 @@ import { Color } from "three";
 
 const rings = Array(14).fill(0);
 
-export function Rings() {
+export function Rings({
+    speed = 1
+}) {
     const itemsRef = useRef([]);
 
     useEffect(() => {
         itemsRef.current = itemsRef.current.slice(0, rings.length);
     }, [])
 
-    useFrame(() => {
+    useFrame((state) => {
+        const elapsed = state.clock.getElapsedTime() * speed;
+
         itemsRef.current.forEach((mesh, index) => {
-            const z = (index - 7) * 3.5;
+            const z = (index - 7) * 3.5 + ((elapsed * 0.4) % 3.5) * 2;
             mesh.position.set(0, 0, -z);
 
             const dist = Math.abs(z);
@@ -37,7 +41,6 @@ export function Rings() {
         <>
             {rings.map((v, index) => (
                 <mesh
-                    castShadow
                     receiveShadow
                     position={[0, 0, 0]}
                     key={index}
